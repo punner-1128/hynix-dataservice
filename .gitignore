@@ -1,0 +1,26 @@
+# 빌드 결과물
+/target/
+/bin/
+
+# IDE 설정 파일
+.classpath
+.project
+.settings/
+
+# STS4/Eclipse 관련
+.metadata/
+.recommenders/
+.sts4-cache/
+.factorypath
+.springBeans
+
+# 로그/임시 파일
+*.log
+*.tmp
+
+# OS 특화 파일
+.DS_Store
+Thumbs.db
+
+# codex 파일
+AGENTS.md
