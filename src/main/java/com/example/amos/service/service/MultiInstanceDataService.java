@@ -102,6 +102,18 @@ public class MultiInstanceDataService {
         return data;
     }
 
+    public List<Map<String, Object>> mongoCollectionSearch(String instance, String collection, Map<String, Object> filter) {
+        String normalized = normalizeMongoInstance(instance);
+        String validatedCollection = normalizeRequiredText(collection, "collection is required");
+
+        return switch (normalized) {
+            case "mongodb1" -> mongoDb1Repository.searchCollection(validatedCollection, filter);
+            case "mongodb2" -> mongoDb2Repository.searchCollection(validatedCollection, filter);
+            case "mongodb3" -> mongoDb3Repository.searchCollection(validatedCollection, filter);
+            default -> throw new ServiceException("4002", "Unknown MongoDB instance: " + instance);
+        };
+    }
+
     public Map<String, Object> logpressoHealth(String instance) {
         String normalized = normalizeInstance(instance);
         String response;
@@ -133,11 +145,29 @@ public class MultiInstanceDataService {
         };
     }
 
+    private String normalizeMongoInstance(String instance) {
+        String normalized = normalizeInstance(instance);
+        return switch (normalized) {
+            case "primary" -> "mongodb1";
+            case "secondary" -> "mongodb2";
+            case "tertiary" -> "mongodb3";
+            default -> normalized;
+        };
+    }
+
     private String normalizeOptionalText(String value) {
         if (value == null) {
             return null;
         }
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String normalizeRequiredText(String value, String message) {
+        String normalized = normalizeOptionalText(value);
+        if (normalized == null) {
+            throw new ServiceException("4004", message);
+        }
+        return normalized;
     }
 }

@@ -1,0 +1,53 @@
+oracle:
+  oracledb1:
+    datasource:
+      url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
+      username: appuser
+      password: app123cokekimchi7kaka
+      driver-class-name: oracle.jdbc.OracleDriver
+  oracledb2:
+    datasource:
+      url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
+      username: appuser
+      password: app123cokekimchi7kaka
+      driver-class-name: oracle.jdbc.OracleDriver
+  oracledb3:
+    datasource:
+      url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
+      username: appuser
+      password: app123cokekimchi7kaka
+      driver-class-name: oracle.jdbc.OracleDriver
+
+mongodb:
+  mongodb1:
+    uri: mongodb://appuser:AppPassword456!@192.168.0.15:27020/secretdb?authSource=admin
+  mongodb2:
+    uri: mongodb://appuser:AppPassword456!@192.168.0.15:27020/secretdb?authSource=admin
+  mongodb3:
+    uri: mongodb://appuser:AppPassword456!@192.168.0.15:27020/secretdb?authSource=admin
+
+logpresso:
+  logpresso1:
+    base-url: http://192.168.0.15:18080
+    connect-timeout-ms: 2000
+    read-timeout-ms: 3000
+  logpresso2:
+    base-url: http://192.168.0.16:18080
+    connect-timeout-ms: 2000
+    read-timeout-ms: 3000
+  logpresso3:
+    base-url: http://192.168.0.17:18080
+    connect-timeout-ms: 2000
+    read-timeout-ms: 3000
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.jdbc.core: INFO
+    org.springframework.data.mongodb.core.MongoTemplate: INFO

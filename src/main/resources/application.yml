@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: amos-service
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+logpresso:
+  retry:
+    max-attempts: 3
+    backoff-ms: 1000
