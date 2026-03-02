@@ -1,5 +1,7 @@
 package com.example.amos.service.repository.oracle;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,5 +26,21 @@ public class OracleDb1Repository {
 
     public List<Map<String, Object>> findAllNewTable() {
         return jdbcTemplate.queryForList("SELECT * FROM NEWTABLE");
+    }
+
+    public List<Map<String, Object>> searchNewTable(String column1, BigDecimal column2) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM APPUSER.NEWTABLE WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (column1 != null) {
+            sql.append(" AND COLUMN1 = ?");
+            params.add(column1);
+        }
+        if (column2 != null) {
+            sql.append(" AND COLUMN2 = ?");
+            params.add(column2);
+        }
+
+        return jdbcTemplate.queryForList(sql.toString(), params.toArray());
     }
 }

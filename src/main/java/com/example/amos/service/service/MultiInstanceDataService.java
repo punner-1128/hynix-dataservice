@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
 
@@ -64,6 +65,18 @@ public class MultiInstanceDataService {
         };
     }
 
+    public List<Map<String, Object>> oracleNewTableSearch(String instance, String column1, BigDecimal column2) {
+        String normalized = normalizeOracleInstance(instance);
+        String normalizedColumn1 = normalizeOptionalText(column1);
+
+        return switch (normalized) {
+            case "oracledb1" -> oracleDb1Repository.searchNewTable(normalizedColumn1, column2);
+            case "oracledb2" -> oracleDb2Repository.searchNewTable(normalizedColumn1, column2);
+            case "oracledb3" -> oracleDb3Repository.searchNewTable(normalizedColumn1, column2);
+            default -> throw new ServiceException("4001", "Unknown Oracle instance: " + instance);
+        };
+    }
+
     public Map<String, Object> mongoPing(String instance) {
         String normalized = normalizeInstance(instance);
         String response;
@@ -110,5 +123,13 @@ public class MultiInstanceDataService {
             case "tertiary" -> "oracledb3";
             default -> normalized;
         };
+    }
+
+    private String normalizeOptionalText(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }
