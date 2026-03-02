@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.example.amos.service.repository.oracle.NewTableMapper;
+import com.example.amos.service.repository.oracle.mapper.NewTableMapper;
 
 @Configuration
 public class OracleMyBatisConfig {

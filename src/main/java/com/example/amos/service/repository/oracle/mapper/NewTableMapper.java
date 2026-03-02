@@ -1,4 +1,4 @@
-package com.example.amos.service.repository.oracle;
+package com.example.amos.service.repository.oracle.mapper;
 
 import java.math.BigDecimal;
 import java.util.List;

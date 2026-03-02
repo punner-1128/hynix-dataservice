@@ -15,7 +15,7 @@ import com.example.amos.service.repository.logpresso.LogpressoDb3Client;
 import com.example.amos.service.repository.mongo.MongoDb1Repository;
 import com.example.amos.service.repository.mongo.MongoDb2Repository;
 import com.example.amos.service.repository.mongo.MongoDb3Repository;
-import com.example.amos.service.repository.oracle.NewTableMapper;
+import com.example.amos.service.repository.oracle.mapper.NewTableMapper;
 import com.example.amos.service.repository.oracle.OracleDb1Repository;
 import com.example.amos.service.repository.oracle.OracleDb2Repository;
 import com.example.amos.service.repository.oracle.OracleDb3Repository;
