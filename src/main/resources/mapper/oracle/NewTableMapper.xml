@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.amos.service.repository.oracle.NewTableMapper">
+
+    <select id="searchNewTable" resultType="map">
+        SELECT *
+        FROM APPUSER.NEWTABLE
+        <where>
+            <if test="column1 != null and column1 != ''">
+                AND COLUMN1 = #{column1}
+            </if>
+            <if test="column2 != null">
+                AND COLUMN2 = #{column2}
+            </if>
+        </where>
+    </select>
+
+</mapper>

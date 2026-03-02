@@ -15,6 +15,7 @@ import com.example.amos.service.repository.logpresso.LogpressoDb3Client;
 import com.example.amos.service.repository.mongo.MongoDb1Repository;
 import com.example.amos.service.repository.mongo.MongoDb2Repository;
 import com.example.amos.service.repository.mongo.MongoDb3Repository;
+import com.example.amos.service.repository.oracle.NewTableMapper;
 import com.example.amos.service.repository.oracle.OracleDb1Repository;
 import com.example.amos.service.repository.oracle.OracleDb2Repository;
 import com.example.amos.service.repository.oracle.OracleDb3Repository;
@@ -28,6 +29,7 @@ public class MultiInstanceDataService {
     private final OracleDb1Repository oracleDb1Repository;
     private final OracleDb2Repository oracleDb2Repository;
     private final OracleDb3Repository oracleDb3Repository;
+    private final Map<String, NewTableMapper> oracleNewTableMapperMap;
 
     private final MongoDb1Repository mongoDb1Repository;
     private final MongoDb2Repository mongoDb2Repository;
@@ -69,12 +71,18 @@ public class MultiInstanceDataService {
         String normalized = normalizeOracleInstance(instance);
         String normalizedColumn1 = normalizeOptionalText(column1);
 
-        return switch (normalized) {
-            case "oracledb1" -> oracleDb1Repository.searchNewTable(normalizedColumn1, column2);
-            case "oracledb2" -> oracleDb2Repository.searchNewTable(normalizedColumn1, column2);
-            case "oracledb3" -> oracleDb3Repository.searchNewTable(normalizedColumn1, column2);
+        String mapperBeanName = switch (normalized) {
+            case "oracledb1" -> "oracleNewTableMapper1";
+            case "oracledb2" -> "oracleNewTableMapper2";
+            case "oracledb3" -> "oracleNewTableMapper3";
             default -> throw new ServiceException("4001", "Unknown Oracle instance: " + instance);
         };
+
+        NewTableMapper mapper = oracleNewTableMapperMap.get(mapperBeanName);
+        if (mapper == null) {
+            throw new ServiceException("5001", "MyBatis mapper not found for instance: " + normalized);
+        }
+        return mapper.searchNewTable(normalizedColumn1, column2);
     }
 
     public Map<String, Object> mongoPing(String instance) {
