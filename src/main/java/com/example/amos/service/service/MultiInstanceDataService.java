@@ -6,6 +6,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -110,11 +113,12 @@ public class MultiInstanceDataService {
     public List<Map<String, Object>> mongoCollectionSearch(String instance, String collection, Map<String, Object> filter) {
         String normalized = normalizeMongoInstance(instance);
         String validatedCollection = normalizeRequiredText(collection, "collection is required");
+        Map<String, Object> normalizedFilter = normalizeMatchValues(filter);
 
         return switch (normalized) {
-            case "mongodb1" -> mongoDb1Repository.searchCollection(validatedCollection, filter);
-            case "mongodb2" -> mongoDb2Repository.searchCollection(validatedCollection, filter);
-            case "mongodb3" -> mongoDb3Repository.searchCollection(validatedCollection, filter);
+            case "mongodb1" -> mongoDb1Repository.searchCollection(validatedCollection, normalizedFilter);
+            case "mongodb2" -> mongoDb2Repository.searchCollection(validatedCollection, normalizedFilter);
+            case "mongodb3" -> mongoDb3Repository.searchCollection(validatedCollection, normalizedFilter);
             default -> throw new ServiceException("4002", "Unknown MongoDB instance: " + instance);
         };
     }
@@ -129,15 +133,60 @@ public class MultiInstanceDataService {
         String validatedCollection = normalizeRequiredText(collection, "collection is required");
         String normalizedGroupField = normalizeOptionalText(groupField);
         String normalizedSumField = normalizeOptionalText(sumField);
+        Map<String, Object> normalizedMatch = normalizeMatchValues(match);
         boolean useGroupAggregation = normalizedGroupField != null && normalizedSumField != null;
 
         List<AggregationOperation> operations = new ArrayList<>();
-        if (match != null && !match.isEmpty()) {
-            Criteria criteria = new Criteria();
-            for (Map.Entry<String, Object> entry : match.entrySet()) {
-                criteria.and(entry.getKey()).is(entry.getValue());
+        if (normalizedMatch != null && !normalizedMatch.isEmpty()) {
+            List<Criteria> criteriaList = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : normalizedMatch.entrySet()) {
+                Criteria fieldCriteria = Criteria.where(entry.getKey());
+                Object value = entry.getValue();
+                boolean hasOperator = false;
+
+                if (value instanceof Map<?, ?> operatorMap) {
+                    for (Map.Entry<?, ?> operatorEntry : operatorMap.entrySet()) {
+                        if (!(operatorEntry.getKey() instanceof String operator)) {
+                            continue;
+                        }
+
+                        Object operatorValue = operatorEntry.getValue();
+                        switch (operator) {
+                            case "$gte" -> {
+                                fieldCriteria.gte(operatorValue);
+                                hasOperator = true;
+                            }
+                            case "$lte" -> {
+                                fieldCriteria.lte(operatorValue);
+                                hasOperator = true;
+                            }
+                            case "$gt" -> {
+                                fieldCriteria.gt(operatorValue);
+                                hasOperator = true;
+                            }
+                            case "$lt" -> {
+                                fieldCriteria.lt(operatorValue);
+                                hasOperator = true;
+                            }
+                            case "$eq" -> {
+                                fieldCriteria.is(operatorValue);
+                                hasOperator = true;
+                            }
+                            default -> {
+                            }
+                        }
+                    }
+                }
+
+                if (!hasOperator) {
+                    fieldCriteria.is(value);
+                }
+                criteriaList.add(fieldCriteria);
             }
-            operations.add(Aggregation.match(criteria));
+
+            if (!criteriaList.isEmpty()) {
+                operations.add(Aggregation.match(new Criteria().andOperator(criteriaList.toArray(new Criteria[0]))));
+            }
         }
 
         if (useGroupAggregation) {
@@ -213,5 +262,45 @@ public class MultiInstanceDataService {
             throw new ServiceException("4004", message);
         }
         return normalized;
+    }
+
+    private Map<String, Object> normalizeMatchValues(Map<String, Object> source) {
+        if (source == null) {
+            return null;
+        }
+
+        Map<String, Object> normalized = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            normalized.put(entry.getKey(), normalizeMatchValue(entry.getValue()));
+        }
+        return normalized;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object normalizeMatchValue(Object value) {
+        if (value instanceof String str) {
+            try {
+                return Date.from(Instant.parse(str));
+            } catch (DateTimeParseException ignored) {
+                return str;
+            }
+        }
+        if (value instanceof Map<?, ?> mapValue) {
+            Map<String, Object> converted = new LinkedHashMap<>();
+            for (Map.Entry<?, ?> mapEntry : mapValue.entrySet()) {
+                if (mapEntry.getKey() instanceof String key) {
+                    converted.put(key, normalizeMatchValue(mapEntry.getValue()));
+                }
+            }
+            return converted;
+        }
+        if (value instanceof List<?> listValue) {
+            List<Object> converted = new ArrayList<>();
+            for (Object item : listValue) {
+                converted.add(normalizeMatchValue(item));
+            }
+            return converted;
+        }
+        return value;
     }
 }
