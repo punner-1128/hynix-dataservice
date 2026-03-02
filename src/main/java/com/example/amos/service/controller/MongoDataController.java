@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.amos.service.common.response.ApiResponse;
 import com.example.amos.service.dto.MongoCollectionSearchRequest;
+import com.example.amos.service.dto.MongoOrdersAggregateRequest;
 import com.example.amos.service.service.MultiInstanceDataService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,18 @@ public class MongoDataController {
                 instanceId,
                 body.getCollection(),
                 body.getFilter()));
+    }
+
+    @PostMapping("/mongo/{instanceId}/aggregate/orders")
+    public ApiResponse<List<Map<String, Object>>> aggregateOrders(@PathVariable String instanceId,
+                                                                  @RequestBody MongoOrdersAggregateRequest request) {
+        MongoOrdersAggregateRequest body = request == null ? new MongoOrdersAggregateRequest() : request;
+        return ApiResponse.ok(multiInstanceDataService.mongoAggregateOrders(
+                instanceId,
+                body.getCollection(),
+                body.getMatch(),
+                body.getGroupField(),
+                body.getSumField(),
+                body.getSortDesc()));
     }
 }

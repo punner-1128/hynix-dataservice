@@ -5,7 +5,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import com.example.amos.service.common.exception.ServiceException;
@@ -110,6 +115,45 @@ public class MultiInstanceDataService {
             case "mongodb1" -> mongoDb1Repository.searchCollection(validatedCollection, filter);
             case "mongodb2" -> mongoDb2Repository.searchCollection(validatedCollection, filter);
             case "mongodb3" -> mongoDb3Repository.searchCollection(validatedCollection, filter);
+            default -> throw new ServiceException("4002", "Unknown MongoDB instance: " + instance);
+        };
+    }
+
+    public List<Map<String, Object>> mongoAggregateOrders(String instance,
+                                                          String collection,
+                                                          Map<String, Object> match,
+                                                          String groupField,
+                                                          String sumField,
+                                                          Boolean sortDesc) {
+        String normalized = normalizeMongoInstance(instance);
+        String validatedCollection = normalizeRequiredText(collection, "collection is required");
+        String normalizedGroupField = normalizeOptionalText(groupField);
+        String normalizedSumField = normalizeOptionalText(sumField);
+        boolean useGroupAggregation = normalizedGroupField != null && normalizedSumField != null;
+
+        List<AggregationOperation> operations = new ArrayList<>();
+        if (match != null && !match.isEmpty()) {
+            Criteria criteria = new Criteria();
+            for (Map.Entry<String, Object> entry : match.entrySet()) {
+                criteria.and(entry.getKey()).is(entry.getValue());
+            }
+            operations.add(Aggregation.match(criteria));
+        }
+
+        if (useGroupAggregation) {
+            operations.add(Aggregation.group(normalizedGroupField).sum(normalizedSumField).as("totalAmount"));
+            if (sortDesc != null) {
+                operations.add(Aggregation.sort(Boolean.TRUE.equals(sortDesc) ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        "totalAmount"));
+            }
+        }
+
+        Aggregation aggregation = Aggregation.newAggregation(operations);
+
+        return switch (normalized) {
+            case "mongodb1" -> mongoDb1Repository.aggregateCollection(validatedCollection, aggregation);
+            case "mongodb2" -> mongoDb2Repository.aggregateCollection(validatedCollection, aggregation);
+            case "mongodb3" -> mongoDb3Repository.aggregateCollection(validatedCollection, aggregation);
             default -> throw new ServiceException("4002", "Unknown MongoDB instance: " + instance);
         };
     }

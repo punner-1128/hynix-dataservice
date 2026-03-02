@@ -8,6 +8,8 @@ import java.util.Date;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -78,6 +80,22 @@ public class MongoDb3Repository {
             query.addCriteria(criteria);
         }
         return (List<Map<String, Object>>) (List<?>) mongoTemplate.find(query, Map.class, collection);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateOrders() {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("status").is("A")),
+                Aggregation.group("cust_id").sum("amount").as("totalAmount"),
+                Aggregation.sort(Sort.Direction.DESC, "totalAmount"));
+
+        return aggregateCollection("orders", aggregation);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateCollection(String collection, Aggregation aggregation) {
+        return (List<Map<String, Object>>) (List<?>) mongoTemplate.aggregate(aggregation, collection, Map.class)
+                .getMappedResults();
     }
 
     private Object convertValue(Object value) {
