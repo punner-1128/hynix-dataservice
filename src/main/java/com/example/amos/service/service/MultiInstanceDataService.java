@@ -1,6 +1,7 @@
 package com.example.amos.service.service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -52,6 +53,17 @@ public class MultiInstanceDataService {
         return data;
     }
 
+    public List<Map<String, Object>> oracleNewTable(String instance) {
+        String normalized = normalizeOracleInstance(instance);
+
+        return switch (normalized) {
+            case "oracledb1" -> oracleDb1Repository.findAllNewTable();
+            case "oracledb2" -> oracleDb2Repository.findAllNewTable();
+            case "oracledb3" -> oracleDb3Repository.findAllNewTable();
+            default -> throw new ServiceException("4001", "Unknown Oracle instance: " + instance);
+        };
+    }
+
     public Map<String, Object> mongoPing(String instance) {
         String normalized = normalizeInstance(instance);
         String response;
@@ -88,5 +100,15 @@ public class MultiInstanceDataService {
 
     private String normalizeInstance(String instance) {
         return instance == null ? "" : instance.toLowerCase(Locale.ROOT).trim();
+    }
+
+    private String normalizeOracleInstance(String instance) {
+        String normalized = normalizeInstance(instance);
+        return switch (normalized) {
+            case "primary" -> "oracledb1";
+            case "secondary" -> "oracledb2";
+            case "tertiary" -> "oracledb3";
+            default -> normalized;
+        };
     }
 }
