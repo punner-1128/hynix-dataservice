@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/data")
 @RequiredArgsConstructor
-public class MongoController {
+public class MongoDataController {
 
     private final MultiInstanceDataService multiInstanceDataService;
 
