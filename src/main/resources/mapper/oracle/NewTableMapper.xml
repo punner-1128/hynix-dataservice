@@ -4,15 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.amos.service.repository.oracle.mapper.NewTableMapper">
 
+    <select id="selectAll" resultType="map">
+        SELECT *
+        FROM NEWTABLE
+    </select>
+
     <select id="searchNewTable" resultType="map">
         SELECT *
-        FROM APPUSER.NEWTABLE
+        FROM NEWTABLE
         <where>
-            <if test="column1 != null and column1 != ''">
-                AND COLUMN1 = #{column1}
+            <if test="param1 != null and param1 != ''">
+                AND COLUMN1 = #{param1}
             </if>
-            <if test="column2 != null">
-                AND COLUMN2 = #{column2}
+            <if test="param2 != null">
+                AND COLUMN2 = #{param2}
             </if>
         </where>
     </select>

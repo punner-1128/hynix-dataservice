@@ -1,30 +1,64 @@
-oracle:
-  oracledb1:
-    datasource:
-      url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
+spring:
+  mongodb:
+    databases:
+      - mongo1
+      - mongo2
+      - mongo3
+  datasource:
+    db1:
+      jdbc-url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
       username: appuser
       password: app123cokekimchi7kaka
       driver-class-name: oracle.jdbc.OracleDriver
-  oracledb2:
-    datasource:
-      url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
+      hikari:
+        maximum-pool-size: 15
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        pool-name: oracle-db1-pool
+    db2:
+      jdbc-url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
       username: appuser
       password: app123cokekimchi7kaka
       driver-class-name: oracle.jdbc.OracleDriver
-  oracledb3:
-    datasource:
-      url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
+      hikari:
+        maximum-pool-size: 15
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        pool-name: oracle-db2-pool
+    db3:
+      jdbc-url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
       username: appuser
       password: app123cokekimchi7kaka
       driver-class-name: oracle.jdbc.OracleDriver
+      hikari:
+        maximum-pool-size: 15
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        pool-name: oracle-db3-pool
 
-mongodb:
-  mongodb1:
-    uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
-  mongodb2:
-    uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
-  mongodb3:
-    uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
+  data:
+    mongodb:
+      mongo1:
+        uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
+        pool:
+          max-size: 50
+          min-size: 5
+      mongo2:
+        uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
+        pool:
+          max-size: 50
+          min-size: 5
+      mongo3:
+        uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
+        pool:
+          max-size: 50
+          min-size: 5
 
 logpresso:
   logpresso1:

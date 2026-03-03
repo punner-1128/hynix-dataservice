@@ -3,6 +3,16 @@ spring:
     name: amos-service
   profiles:
     active: dev
+  oracle:
+    databases:
+      - db1
+      - db2
+      - db3
+  mongodb:
+    databases:
+      - mongo1
+      - mongo2
+      - mongo3
 
 server:
   port: 8080

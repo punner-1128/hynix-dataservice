@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.amos.service.common.response.ApiResponse;
 import com.example.amos.service.dto.OracleNewTableSearchRequest;
 import com.example.amos.service.service.MultiInstanceDataService;
+import com.example.amos.service.service.OracleNewTableService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,12 @@ import lombok.RequiredArgsConstructor;
 public class OracleDataController {
 
     private final MultiInstanceDataService multiInstanceDataService;
+    private final OracleNewTableService oracleNewTableService;
+
+    @PostMapping("/oracle/newtable/all")
+    public ApiResponse<List<Map<String, Object>>> getNewTable() {
+        return ApiResponse.ok(oracleNewTableService.getNewTable());
+    }
 
     @PostMapping("/oracle/{instanceId}/newtable")
     public ApiResponse<List<Map<String, Object>>> findAllNewTable(@PathVariable String instanceId) {
