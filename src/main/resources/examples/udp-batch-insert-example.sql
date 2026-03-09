@@ -1,0 +1,4 @@
+INSERT INTO tb_udt_inout
+(FIELD1, FIELD2, FIELD3, FIELD4, FIELD5)
+VALUES
+(?, ?, ?, ?, ?)
