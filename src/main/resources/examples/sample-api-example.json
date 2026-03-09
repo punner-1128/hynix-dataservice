@@ -1,0 +1,21 @@
+{
+  "request": {
+    "column1": "test",
+    "column2": 100
+  },
+  "response": {
+    "m14": [
+      {
+        "COLUMN1": "alpha",
+        "COLUMN2": 101
+      }
+    ],
+    "m15": [
+      {
+        "COLUMN1": "beta",
+        "COLUMN2": 150
+      }
+    ],
+    "m16": []
+  }
+}

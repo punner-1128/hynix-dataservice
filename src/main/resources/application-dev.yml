@@ -1,11 +1,6 @@
 spring:
-  mongodb:
-    databases:
-      - mongo1
-      - mongo2
-      - mongo3
   datasource:
-    db1:
+    m14:
       jdbc-url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
       username: appuser
       password: app123cokekimchi7kaka
@@ -17,7 +12,7 @@ spring:
         idle-timeout: 600000
         max-lifetime: 1800000
         pool-name: oracle-db1-pool
-    db2:
+    m15:
       jdbc-url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
       username: appuser
       password: app123cokekimchi7kaka
@@ -29,7 +24,7 @@ spring:
         idle-timeout: 600000
         max-lifetime: 1800000
         pool-name: oracle-db2-pool
-    db3:
+    m16:
       jdbc-url: jdbc:oracle:thin:@//192.168.0.15:1521/XEPDB1
       username: appuser
       password: app123cokekimchi7kaka
@@ -41,38 +36,6 @@ spring:
         idle-timeout: 600000
         max-lifetime: 1800000
         pool-name: oracle-db3-pool
-
-  data:
-    mongodb:
-      mongo1:
-        uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
-        pool:
-          max-size: 50
-          min-size: 5
-      mongo2:
-        uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
-        pool:
-          max-size: 50
-          min-size: 5
-      mongo3:
-        uri: mongodb://appuser:AppPassword456!@localhost:27020/secretdb?authSource=admin
-        pool:
-          max-size: 50
-          min-size: 5
-
-logpresso:
-  logpresso1:
-    base-url: http://localhost:18080
-    connect-timeout-ms: 2000
-    read-timeout-ms: 3000
-  logpresso2:
-    base-url: http://localhost:18081
-    connect-timeout-ms: 2000
-    read-timeout-ms: 3000
-  logpresso3:
-    base-url: http://localhost:18082
-    connect-timeout-ms: 2000
-    read-timeout-ms: 3000
 
 springdoc:
   api-docs:

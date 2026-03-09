@@ -5,14 +5,9 @@ spring:
     active: dev
   oracle:
     databases:
-      - db1
-      - db2
-      - db3
-  mongodb:
-    databases:
-      - mongo1
-      - mongo2
-      - mongo3
+      - m14
+      - m15
+      - m16      
 
 server:
   port: 8080
