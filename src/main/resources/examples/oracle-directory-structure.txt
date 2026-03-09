@@ -1,0 +1,14 @@
+src/main/java/com/example/amos/service/
+src/main/java/com/example/amos/service/config/OracleDataSourceConfig.java
+src/main/java/com/example/amos/service/config/OracleMyBatisConfig.java
+src/main/java/com/example/amos/service/config/OracleProperties.java
+src/main/java/com/example/amos/service/config/OracleProvider.java
+src/main/java/com/example/amos/service/controller/HomeController.java
+src/main/java/com/example/amos/service/dto/SampleRequest.java
+src/main/java/com/example/amos/service/mapper/NewTableMapper.java
+src/main/java/com/example/amos/service/mapper/UserMapper.java
+src/main/java/com/example/amos/service/mapper/LogMapper.java
+src/main/java/com/example/amos/service/service/OracleService.java
+src/main/resources/mapper/oracle/NewTableMapper.xml
+src/main/resources/mapper/oracle/UserMapper.xml
+src/main/resources/mapper/oracle/LogMapper.xml
